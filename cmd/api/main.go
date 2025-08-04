@@ -1,16 +1,21 @@
 package main
 
 import (
+	"BackendEngineeringGo/internal/db"
 	"BackendEngineeringGo/internal/env"
-	store2 "BackendEngineeringGo/internal/store"
+	"BackendEngineeringGo/internal/store"
+	"database/sql"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
 )
 
 var (
-	ENVADDR  = os.Getenv("ADDR")
-	GODOTENV = godotenv.Load()
+	ENVADDR      = os.Getenv("ADDR")
+	GODOTENV     = godotenv.Load()
+	MAXOPENCONNS = 30
+	MAXIDLECONNS = 30
+	MAXIDLETIME  = "15m"
 )
 
 func main() {
@@ -21,9 +26,35 @@ func main() {
 
 	cfg := config{
 		addr: env.GetString("ADDR", ENVADDR),
+		db: dbConfig{
+			addr:         env.GetString("DB_ADDR", "postgres://admin:adminpassword@localhost/backendengineeringGo?sslmode=disable"),
+			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", MAXOPENCONNS),
+			maxIdleConns: env.GetInt("DB_MAX_IDLE_CONNS", MAXIDLECONNS),
+			MaxIdleTime:  env.GetString("DB_MAX_IDLE_TIME", MAXIDLETIME),
+		},
 	}
 
-	store := store2.NewStorage(nil)
+	db, err := db.New(
+		cfg.db.addr,
+		cfg.db.maxOpenConns,
+		cfg.db.maxIdleConns,
+		cfg.db.MaxIdleTime,
+	)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// close DB
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			return
+		}
+	}(db)
+
+	log.Println("database connect pool established")
+
+	store := store.NewStorage(db)
 
 	app := &application{
 		config: cfg,

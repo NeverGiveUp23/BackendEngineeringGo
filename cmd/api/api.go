@@ -16,6 +16,14 @@ type application struct {
 
 type config struct {
 	addr string
+	db   dbConfig
+}
+
+type dbConfig struct {
+	addr         string
+	maxOpenConns int
+	maxIdleConns int
+	MaxIdleTime  string
 }
 
 // mounting to server and requesting for health check -> chi.Mux implements http.Handler

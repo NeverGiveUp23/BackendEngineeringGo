@@ -1,6 +1,7 @@
 package main
 
 import (
+	"BackendEngineeringGo/internal/store"
 	"net/http"
 )
 
@@ -9,5 +10,8 @@ func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	app.store.Posts.Create(r.Context())
+	err := app.store.Posts.Create(r.Context(), &store.Post{})
+	if err != nil {
+		return
+	}
 }
