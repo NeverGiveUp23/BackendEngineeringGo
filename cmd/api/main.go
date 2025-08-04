@@ -12,6 +12,7 @@ import (
 
 var (
 	ENVADDR      = os.Getenv("ADDR")
+	ENVDBADDR    = os.Getenv("DB_ADDR")
 	GODOTENV     = godotenv.Load()
 	MAXOPENCONNS = 30
 	MAXIDLECONNS = 30
@@ -27,7 +28,7 @@ func main() {
 	cfg := config{
 		addr: env.GetString("ADDR", ENVADDR),
 		db: dbConfig{
-			addr:         env.GetString("DB_ADDR", "postgres://admin:adminpassword@localhost/backendengineeringGo?sslmode=disable"),
+			addr:         env.GetString("DB_ADDR", ENVDBADDR),
 			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", MAXOPENCONNS),
 			maxIdleConns: env.GetInt("DB_MAX_IDLE_CONNS", MAXIDLECONNS),
 			MaxIdleTime:  env.GetString("DB_MAX_IDLE_TIME", MAXIDLETIME),
