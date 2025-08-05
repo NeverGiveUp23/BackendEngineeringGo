@@ -19,6 +19,8 @@ var (
 	MAXIDLETIME  = "15m"
 )
 
+const version = "0.0.1"
+
 func main() {
 	err := GODOTENV
 	if err != nil {
@@ -33,6 +35,7 @@ func main() {
 			maxIdleConns: env.GetInt("DB_MAX_IDLE_CONNS", MAXIDLECONNS),
 			MaxIdleTime:  env.GetString("DB_MAX_IDLE_TIME", MAXIDLETIME),
 		},
+		env: env.GetString("Env", "development"),
 	}
 
 	db, err := db.New(
