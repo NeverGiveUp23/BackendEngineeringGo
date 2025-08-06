@@ -1,4 +1,4 @@
-# BackendEngineeringGo
+# Backend Engineering In Go
 
 A modern Go backend API service built with clean architecture principles, featuring user and post management with PostgreSQL integration.
 
